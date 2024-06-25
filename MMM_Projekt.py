@@ -33,8 +33,6 @@ def wykres(y):
     plt.ylabel('Os Y')
     plt.title('Sygnal wejsciowy')
     plt.show()
-    for i in y:
-        print (i)
     
     
 def rodzaj_sygnalu_wejsciowego(wybor):

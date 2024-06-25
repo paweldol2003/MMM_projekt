@@ -26,10 +26,24 @@ def triangle_wave(a, f, signal_duration, sampling_f):
 
 # stałe w programie
 
+# wczytanie parametrów modelu
+    # R = float(input("\n R = "))
+    # Lc = float(input("\n L = "))
+    # Ke = float(input("\n Ke = "))
+    # Kt = float(input("\n Kt = "))
+    # J = float(input("\n J = "))
+    # k = float(input("\n k = "))
+Lc = 0.5  # Indukcyjność
+R = 1  # Rezystancja
+Ke = 0.1  # Stała elektromotoryczna
+Kt = 0.1  # Stała momentu obrotowego
+J = 0.01  # Moment bezwładności
+k = 0.1  # Współczynnik tłumienia
 
 N = 2  # rząd systemu
-h = 0.01  # krok obliczeń
-T = 10.0  # całkowity czas symulacji – przedział [0 , T]
+h = 0.01  # krok obliczeń               ???????
+T = 100.0  # całkowity czas symulacji – przedział [0 , T]
+#f = 
 L = 2.5  # liczba okresów sygnału sinus w przedziale T
 M = 8.0  # amplituda sygnału sinus
 PI = 3.14159265  # liczba PI
@@ -78,14 +92,6 @@ def main():
     B = Vect()
     C = Vect()
 
-    # wczytanie parametrów modelu
-    R = float(input("\n R = "))
-    Lc = float(input("\n L = "))
-    Ke = float(input("\n Ke = "))
-    Kt = float(input("\n Kt = "))
-    J = float(input("\n J = "))
-    k = float(input("\n k = "))
-
     a0 = (-R / Lc - (Ke * Kt) / J * Lc)
     a1 = Ke * k / J
     a2 = Kt / J * Lc
@@ -115,13 +121,13 @@ def main():
     # główna pętla obliczeń - zamiast pobudzenia sinus (us) można wstawić falę (uf) lub trójkąt (ut)
     for i in range(total):
         Ax = A * xi_1
-        Bu = B * us[i]  # można zmienić na uf[i] lub ut[i]
+        Bu = B * uf[i]  # można zmienić na uf[i] lub ut[i]
         Cx = C.dot(xi_1)
-        Du = D * us[i]  # można zmienić na uf[i] lub ut[i]
+        #Du = D * uf[i]  # można zmienić na uf[i] lub ut[i]
         xi = (Ax + Bu) * h
         xi = xi_1 + xi
         xi_1 = xi
-        y[i] = Cx + Du
+        y[i] = Cx #+ Du
 
     # zapisanie wyników u(t) (sinus, prostokąt, trójkąt) i y(t) do tablic
     results_us = us.tolist()
