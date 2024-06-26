@@ -4,7 +4,6 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import tkinter as tk
 
-
 # Stałe w programie
 L = 0.5  # Indukcyjność
 R = 1  # Rezystancja
@@ -21,15 +20,7 @@ Lo = T * freq  # Liczba okresów sygnału sinus w przedziale T
 amplitude = 8.0  # Amplituda sygnału sinus
 PI = 3.14159265  # Liczba PI
 
-# Zmienne globalne w programie
-total = int(T / step) + 1
-sin = np.zeros(total)  # Sygnał wejściowy sinus
-rec = np.zeros(total)  # Sygnał wejściowy fala prostokątna
-tri = np.zeros(total)  # Sygnał wejściowy trójkątny
-prad_wyjsciowy = np.zeros(total)
-moment_wyjsciowy = np.zeros(total)
-
-def main(L, R, Ke, Kt, J, k, amplitude, freq, T, signal_type):
+def main(L, R, Ke, Kt, J, k, amplitude, freq, T, step, signal_type):
     total = int(T / step) + 1
 
     # Definiowanie macierzy A, B, C
@@ -42,6 +33,12 @@ def main(L, R, Ke, Kt, J, k, amplitude, freq, T, signal_type):
 
     # Obliczenie pobudzenia – sinus, fala prostokątna oraz fala trójkątna
     w = 2.0 * PI * freq  # Częstotliwość sinusoidy L/T = F
+    sin = np.zeros(total)
+    rec = np.zeros(total)
+    tri = np.zeros(total)
+    prad_wyjsciowy = np.zeros(total)
+    moment_wyjsciowy = np.zeros(total)
+
     for i in range(total):
         t = i * step
         sin[i] = amplitude * math.sin(w * t)  # Sygnał wejściowy sinus: u=M*sin(w*t)
@@ -118,10 +115,11 @@ class Application(tk.Tk):
         amplitude = float(self.labels_entries["Amplituda"].get())
         freq = float(self.labels_entries["Częstotliwość"].get())
         T = float(self.labels_entries["Czas trwania sygnału"].get())
+        #step = float(self.labels_entries["Krok obliczeń"].get())
         signal_type = self.signal_type.get()
         
         # Uruchomienie symulacji
-        sin, rec, tri, prad_wyjsciowy, moment_wyjsciowy, sygnal_wejsciowy = main(L, R, Ke, Kt, J, k, amplitude, freq, T, signal_type)
+        sin, rec, tri, prad_wyjsciowy, moment_wyjsciowy, sygnal_wejsciowy = main(L, R, Ke, Kt, J, k, amplitude, freq, T, step, signal_type)
         
         # Aktualizacja wykresów
         time = np.linspace(0, T, len(prad_wyjsciowy))
@@ -146,7 +144,6 @@ class Application(tk.Tk):
         
         self.fig.tight_layout()
         self.canvas.draw()
-
 
 app = Application()
 app.mainloop()
