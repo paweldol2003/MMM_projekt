@@ -10,7 +10,7 @@ Kt = 0.1  # Stała momentu obrotowego
 J = 0.01  # Moment bezwładności
 k = 0.1  # Współczynnik tłumienia
 
-N = 2  # Rząd systemu
+N = 2  # Rząd układu
 step = 0.01  # Krok obliczeń        
 T = 10.0  # Całkowity czas symulacji – przedział [0 , T]
 freq = 0.25  # Częstotliwość sygnału
@@ -23,20 +23,21 @@ total = int(T / step) + 1
 sin = np.zeros(total)  # Sygnał wejściowy sinus
 rec = np.zeros(total)  # Sygnał wejściowy fala prostokątna
 tri = np.zeros(total)  # Sygnał wejściowy trójkątny
-y = np.zeros(total)  # Sygnał wyjściowy
+prad_wyjsciowy = np.zeros(total)
+moment_wyjsciowy = np.zeros(total)
 
 def main():
     # Definiowanie macierzy A, B, C
-    A = np.array([[-R / L - (Ke * Kt) / (J * L), Ke * k / J],
-                  [Kt / (J * L), -k / J]])
+    A = np.array([[-R / L - (Ke * Kt) / (J * L),     Ke * k / J],
+                  [Kt / (J * L),     -k / J]])
     B = np.array([1 / L, 0])
-    C = np.array([1, 0])
+    Ci = np.array([1, 0])
+    Cm = np.array([0, 1])
     D = 0
 
-    # Rozmiar wektorów danych
-    w = 2.0 * PI * Lo / T  # Częstotliwość sinusoidy L/T = F
 
     # Obliczenie pobudzenia – sinus, fala prostokątna oraz fala trójkątna
+    w = 2.0 * PI * freq  # Częstotliwość sinusoidy L/T = F
     for i in range(total):
         t = i * step
         sin[i] = amplitude * math.sin(w * t)  # Sygnał wejściowy sinus: u=M*sin(w*t)
@@ -49,19 +50,22 @@ def main():
     # Główna pętla obliczeń - zamiast pobudzenia sinus (sin) można wstawić falę (rec) lub trójkąt (tri)
     for i in range(total):
         Ax = A @ xi_1
-        Bu = B * tri[i]  # Można zmienić na sin[i] lub rec[i]
-        Cx = C @ xi_1
+        Bu = B * rec[i]  # Można zmienić na sin[i] lub rec[i]
+        Cix = Ci @ xi_1
+        Cmx = Cm @ xi_1
         xi = (Ax + Bu) * step
         xi = xi_1 + xi
         xi_1 = xi
-        y[i] = Cx  # + D * tri[i] można dodać jeśli D ≠ 0
+        prad_wyjsciowy[i] = Cix  # + D * tri[i] można dodać jeśli D ≠ 0
+        moment_wyjsciowy[i] = Cmx
 
-    return sin, rec, tri, y
+    return sin, rec, tri, prad_wyjsciowy, moment_wyjsciowy
 
 if __name__ == "__main__":
-    results_us, results_uf, results_ut, results_y = main()
+    results_us, results_uf, results_ut, results_prad, results_moment = main()
     time = np.linspace(0, T, total)
-    plt.plot(time, results_y, label='y(t)')
+    plt.plot(time, results_prad, label='Prad')
+    plt.plot(time, results_moment, label='Moment')
     plt.xlabel('Czas (s)')
     plt.ylabel('y(t)')
     plt.title('Wykres y(t)')
