@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>d79005e8-b138-40f4-8e0f-f2397afd73ec</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>pythonProject2/maths.py</StartupFile>
+    <StartupFile>pythonProject2/silnik.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
