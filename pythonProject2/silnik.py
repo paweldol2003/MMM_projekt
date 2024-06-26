@@ -28,7 +28,7 @@ def main(L, R, Ke, Kt, J, k, amplitude, freq, T, step, signal_type):
                   [Kt / (J * L),     -k / J]])
     B = np.array([1 / L, 0])
     Ci = np.array([1, 0])
-    Cm = np.array([0, 1])
+    Cm = np.array([Kt/J, -k/J])
     D = 0
 
     # Obliczenie pobudzenia – sinus, fala prostokątna oraz fala trójkątna
@@ -37,7 +37,7 @@ def main(L, R, Ke, Kt, J, k, amplitude, freq, T, step, signal_type):
     rec = np.zeros(total)
     tri = np.zeros(total)
     prad_wyjsciowy = np.zeros(total)
-    moment_wyjsciowy = np.zeros(total)
+    predkosc_wyjsciowa = np.zeros(total)
 
     for i in range(total):
         t = i * step
@@ -66,9 +66,9 @@ def main(L, R, Ke, Kt, J, k, amplitude, freq, T, step, signal_type):
         xi = xi_1 + xi
         xi_1 = xi
         prad_wyjsciowy[i] = Cix  # + D * tri[i] można dodać jeśli D ≠ 0
-        moment_wyjsciowy[i] = Cmx
+        predkosc_wyjsciowa[i] = Cmx
 
-    return sin, rec, tri, prad_wyjsciowy, moment_wyjsciowy, input_signal
+    return sin, rec, tri, prad_wyjsciowy, predkosc_wyjsciowa, input_signal
 
 class Application(tk.Tk):
     def __init__(self):
@@ -119,7 +119,7 @@ class Application(tk.Tk):
         signal_type = self.signal_type.get()
         
         # Uruchomienie symulacji
-        sin, rec, tri, prad_wyjsciowy, moment_wyjsciowy, sygnal_wejsciowy = main(L, R, Ke, Kt, J, k, amplitude, freq, T, step, signal_type)
+        sin, rec, tri, prad_wyjsciowy, predkosc_wyjsciowy, sygnal_wejsciowy = main(L, R, Ke, Kt, J, k, amplitude, freq, T, step, signal_type)
         
         # Aktualizacja wykresów
         time = np.linspace(0, T, len(prad_wyjsciowy))
@@ -129,7 +129,7 @@ class Application(tk.Tk):
 
         self.axs[0].plot(time, sygnal_wejsciowy, label="Sygnał wejściowy")
         self.axs[1].plot(time, prad_wyjsciowy, label="Prąd")
-        self.axs[2].plot(time, moment_wyjsciowy, label="Moment")
+        self.axs[2].plot(time, predkosc_wyjsciowy, label="Prędkość")
 
         # Dodanie etykiet do osi
         self.axs[0].set_xlabel('Czas (s)')
@@ -137,7 +137,7 @@ class Application(tk.Tk):
         self.axs[1].set_xlabel('Czas (s)')
         self.axs[1].set_ylabel('Prąd (A)')
         self.axs[2].set_xlabel('Czas (s)')
-        self.axs[2].set_ylabel('Moment (Nm)')
+        self.axs[2].set_ylabel('Prędkość (rad/s)')
                                
         for ax in self.axs:
             ax.grid(True)
